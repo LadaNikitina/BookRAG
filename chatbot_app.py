@@ -9,6 +9,11 @@ st.set_page_config(page_title="Chatbot: The Brothers Karamazov", layout="centere
 st.title("Chatbot: The Brothers Karamazov")
 st.write("Ask any question about the book 'The Brothers Karamazov'. Type 'exit' to end the chat.")
 
+# Field to input OpenAI API key
+st.sidebar.header("API Configuration")
+api_key = st.sidebar.text_input("Enter your OpenAI API Key:", type="password", placeholder="Enter your API key here...")
+st.sidebar.write("Please provide your API key once before starting the chat. If not provided, the bot will return a default stub answer.")
+
 # Session state to maintain conversation history
 if 'messages' not in st.session_state:
     st.session_state.messages = []
