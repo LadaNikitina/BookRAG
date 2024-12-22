@@ -103,6 +103,21 @@ from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
 
+# Streamlit
+
+import streamlit as st
+from streamlit_chat import message
+
+# Инициализация приложения Streamlit
+st.set_page_config(page_title="Чат-бот: Братья Карамазовы", layout="centered")
+st.title("Чат-бот: Братья Карамазовы")
+st.write("Задайте любой вопрос о книге 'Братья Карамазовы'. Введите 'выход' для завершения чата.")
+
+# Поле для ввода OpenAI API ключа
+st.sidebar.header("Настройки API")
+api_key = st.sidebar.text_input("Введите ваш OpenAI API ключ:", type="password", placeholder="Введите ваш API ключ здесь...")
+st.sidebar.write("Пожалуйста, предоставьте ваш API ключ перед началом чата. Если ключ не предоставлен, бот вернёт стандартный ответ.")
+
 api_key = input("Введите API ключ: ")
 
 # Инициализация модели эмбеддингов
@@ -160,40 +175,6 @@ qa_chain = RetrievalQA.from_chain_type(
     return_source_documents=True,  # Добавляем возврат источников
     chain_type_kwargs={"prompt": prompt}
 )
-
-# def chatbot():
-#     print("Чат-бот по книге 'Братья Карамазовы'. Задайте свой вопрос или введите 'выход' для завершения.")
-#     while True:
-#         try:
-#             user_input = input("Вы: ")
-#             if user_input.lower() in ['выход', 'exit', 'quit']:
-#                 print("Чат-бот: До свидания!")
-#                 break
-#             response = qa_chain.invoke(user_input)
-#             # print(response["source_documents"])
-#             result = response['result']
-#             print(result)
-#         except Exception as e:
-#             print(f"Чат-бот: Извините, произошла ошибка: {e}")
-
-# if __name__ == "__main__":
-#     chatbot()
-
-
-# Streamlit
-
-import streamlit as st
-from streamlit_chat import message
-
-# Инициализация приложения Streamlit
-st.set_page_config(page_title="Чат-бот: Братья Карамазовы", layout="centered")
-st.title("Чат-бот: Братья Карамазовы")
-st.write("Задайте любой вопрос о книге 'Братья Карамазовы'. Введите 'выход' для завершения чата.")
-
-# Поле для ввода OpenAI API ключа
-st.sidebar.header("Настройки API")
-api_key = st.sidebar.text_input("Введите ваш OpenAI API ключ:", type="password", placeholder="Введите ваш API ключ здесь...")
-st.sidebar.write("Пожалуйста, предоставьте ваш API ключ перед началом чата. Если ключ не предоставлен, бот вернёт стандартный ответ.")
 
 # Состояние сессии для хранения истории сообщений
 if 'messages' not in st.session_state:
