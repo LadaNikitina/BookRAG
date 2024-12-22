@@ -1,76 +1,19 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # BookRAG
-
-# ## Установка библиотек
-
-# In[117]:
-
-
 # !pip install streamlit streamlit-chat
-
-
-# In[118]:
-
-
 # !pip install langchain
-
-
-# In[119]:
-
-
 # !pip install -U langchain-community
-
-
-# In[120]:
-
-
 # !pip install sentence-transformers
-
-
-# In[121]:
-
-
 # !pip install faiss-gpu
-
-
-# In[122]:
-
-
 # !pip install openai
-
-
-# In[123]:
-
-
 # !pip install langchain_openai
-
-
-# In[124]:
-
-
 # !pip install pypdf
-
-
-# In[125]:
-
-
 # !pip install tiktoken
-
-
-# ## Препроцессинг данных
-
-# In[106]:
-
 
 from langchain_community.document_loaders import PyPDFLoader
 import re
 from typing import List, Dict
-
-
-# In[107]:
-
 
 # Путь к PDF файлу
 PDF_FILE_PATH = '/kaggle/input/karamazovy/dostoevskiy_bratya_karamazovy.pdf'
@@ -98,20 +41,6 @@ pages = loader.load()[7:]
     
 #     # Перезаписываем текст страницы
 #     pages[i].page_content = text
-
-# Проверка количества страниц после обработки
-total_pages = len(pages)
-print(f"Всего страниц: {total_pages}")
-
-
-# In[108]:
-
-
-pages[0]
-
-
-# In[109]:
-
 
 def split_text_into_chunks_with_metadata(pages, chunk_size=500):
     current_book = None
@@ -166,13 +95,6 @@ def split_text_into_chunks_with_metadata(pages, chunk_size=500):
     return chunks
 
 chunks = split_text_into_chunks_with_metadata(pages)
-print(f"Всего чанков: {len(chunks)}")
-
-
-# ## Реализация RAG
-
-# In[110]:
-
 
 import faiss
 from langchain.embeddings import OpenAIEmbeddings
@@ -181,15 +103,7 @@ from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
 
-
-# In[111]:
-
-
 api_key = input("Введите API ключ: ")
-
-
-# In[112]:
-
 
 # Инициализация модели эмбеддингов
 embeddings = OpenAIEmbeddings(model="text-embedding-3-large", openai_api_key=api_key)
@@ -204,20 +118,12 @@ vector_store = FAISS.from_texts(texts, embeddings, metadatas=metadatas)
 # Сохранение индекса (опционально)
 vector_store.save_local("faiss_index")
 
-
-# In[113]:
-
-
 llm = ChatOpenAI(
     model="gpt-4o",           # Specify the GPT-4o model
     temperature=0.00,         # Low creativity for precise answers
     openai_api_key=api_key,   # Your OpenAI API key
     max_tokens=2048           # Adjust as needed
 )
-
-
-# In[114]:
-
 
 from langchain.prompts import PromptTemplate
 
@@ -246,10 +152,6 @@ prompt = PromptTemplate(
     input_variables=["context", "question"]
 )
 
-
-# In[115]:
-
-
 # Создание цепочки Вопрос-Ответ с использованием RetrievalQA
 qa_chain = RetrievalQA.from_chain_type(
     llm=llm,
@@ -258,10 +160,6 @@ qa_chain = RetrievalQA.from_chain_type(
     return_source_documents=True,  # Добавляем возврат источников
     chain_type_kwargs={"prompt": prompt}
 )
-
-
-# In[128]:
-
 
 # def chatbot():
 #     print("Чат-бот по книге 'Братья Карамазовы'. Задайте свой вопрос или введите 'выход' для завершения.")
@@ -282,10 +180,7 @@ qa_chain = RetrievalQA.from_chain_type(
 #     chatbot()
 
 
-# ## Streamlit
-
-# In[ ]:
-
+# Streamlit
 
 import streamlit as st
 from streamlit_chat import message
@@ -333,10 +228,3 @@ if user_input:
         # Отображение новых сообщений
         message(user_input, is_user=True, key=f"user_{len(st.session_state.messages) - 2}")
         message(response, key=f"bot_{len(st.session_state.messages) - 1}")
-
-
-# In[ ]:
-
-
-
-
