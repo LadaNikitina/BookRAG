@@ -197,7 +197,7 @@ if user_input:
 
         try:
             # Генерация ответа с использованием qa_chain
-            response = qa_chain.invoke(user_input)
+            response = qa_chain.invoke(user_input)['result']
         except Exception as e:
             response = f"Извините, произошла ошибка: {e}"
 
