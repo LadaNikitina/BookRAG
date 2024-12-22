@@ -5,12 +5,12 @@
 Исполнители: Леднева Дарья, Федотова Евгения, Клименченко Дмитрий
 
 ## Streamlit Application 
-Dependencies installation:
+Установка зависимостей:
 
 `pip install streamlit streamlit-chat
 `
 
-To run the application use this command:
+Для запуска воспользуйтесь командой:
 
 `streamlit run rag-solution-with-streamlit.py
 `
