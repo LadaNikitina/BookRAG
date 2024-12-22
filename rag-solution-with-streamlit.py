@@ -118,8 +118,6 @@ st.sidebar.header("Настройки API")
 api_key = st.sidebar.text_input("Введите ваш OpenAI API ключ:", type="password", placeholder="Введите ваш API ключ здесь...")
 st.sidebar.write("Пожалуйста, предоставьте ваш API ключ перед началом чата. Если ключ не предоставлен, бот вернёт стандартный ответ.")
 
-api_key = input("Введите API ключ: ")
-
 # Инициализация модели эмбеддингов
 embeddings = OpenAIEmbeddings(model="text-embedding-3-large", openai_api_key=api_key)
 
