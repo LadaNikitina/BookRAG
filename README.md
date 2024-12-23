@@ -1,4 +1,4 @@
-# Проект BookRAG
+# Проект BookRA
 
 Команда "Bookworms"
 
