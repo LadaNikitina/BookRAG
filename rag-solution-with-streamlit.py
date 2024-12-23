@@ -4,19 +4,20 @@
 # !pip install streamlit streamlit-chat
 # !pip install langchain
 # !pip install -U langchain-community
-# !pip install sentence-transformers
-# !pip install faiss-gpu
+# !pip3 install sentence-transformers
+# !pip3 install faiss-gpu
 # !pip install openai
-# !pip install langchain_openai
-# !pip install pypdf
-# !pip install tiktoken
+# !pip3 install langchain_openai
+# !pip3 install pypdf
+# !pip3 install tiktoken
 
 from langchain_community.document_loaders import PyPDFLoader
 import re
 from typing import List, Dict
 
 # Путь к PDF файлу
-PDF_FILE_PATH = '/kaggle/input/karamazovy/dostoevskiy_bratya_karamazovy.pdf'
+# PDF_FILE_PATH = '/kaggle/input/karamazovy/dostoevskiy_bratya_karamazovy.pdf'
+PDF_FILE_PATH = 'book/dostoevskiy_bratya_karamazovy.pdf'
 
 # Загрузка страниц из PDF
 loader = PyPDFLoader(PDF_FILE_PATH)
