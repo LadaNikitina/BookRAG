@@ -22,12 +22,7 @@ P.S. Тем более, что реализация на GigaChat быстрее
 
 ## Демо проекта
 
-Записано для Giga-BookRAG, реализованного на основе GigaChat.
-
-<video width="640" height="360" controls>
-  <source src="additional_materials/GigaBookRAG.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+Демо проекта можно посмотреть по [ссылке](https://drive.google.com/file/d/1vo0ggH95uGgEKx4H_Fntg8SOLOCva6tk/view?usp=sharing). Записано для Giga-BookRAG, реализованного на основе GigaChat.
 
 ### Конечный результат
 
