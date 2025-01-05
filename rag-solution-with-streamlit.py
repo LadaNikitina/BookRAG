@@ -1,49 +1,58 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# !pip install streamlit streamlit-chat
 # !pip install langchain
-# !pip install -U langchain-community
-# !pip3 install sentence-transformers
-# !pip3 install faiss-gpu
-# !pip install openai
-# !pip3 install langchain_openai
-# !pip3 install pypdf
-# !pip3 install tiktoken
+# !pip install langchain-gigachat
+# !pip install langchain-community
+# !pip install faiss-gpu
+# !pip install streamlit
+# !pip install streamlit-chat
 
+from langchain.embeddings import OpenAIEmbeddings
+from langchain.vectorstores import FAISS
+from langchain.chains import RetrievalQA
+from langchain.prompts import PromptTemplate
 from langchain_community.document_loaders import PyPDFLoader
-import re
+from langchain_openai import ChatOpenAI
+from streamlit_chat import message
 from typing import List, Dict
+
+import faiss
+import json
+import os
+import re
+import streamlit as st
+import shutil
 
 # Путь к PDF файлу
 # PDF_FILE_PATH = '/kaggle/input/karamazovy/dostoevskiy_bratya_karamazovy.pdf'
 PDF_FILE_PATH = 'book/dostoevskiy_bratya_karamazovy.pdf'
 
-# Загрузка страниц из PDF
-loader = PyPDFLoader(PDF_FILE_PATH)
-pages = loader.load()[7:]
+# Streamlit
 
-# # Обработка текста для каждой страницы
-# for i in range(len(pages)):
-#     # Текущий текст страницы
-#     text = pages[i].page_content
-    
-#     # Убираем переносы слов (например, "припоминае-\nмого" -> "припоминаемого")
-#     text = re.sub(r'-\n', '', text)
-    
-#     # Заменяем разрывы строк на пробелы (например, "\n" -> " ")
-#     text = re.sub(r'\n', ' ', text)
-    
-#     # Удаляем лишние пробелы
-#     text = re.sub(r'\s+', ' ', text).strip()
-    
-#     # Удаляем подстроку с названием книги и автором
-#     text = re.sub(r'Ф\.?\s*М\.?\s*Достоевский\.?\s*«Братья Карамазовы»', '', text, flags=re.IGNORECASE)
-    
-#     # Перезаписываем текст страницы
-#     pages[i].page_content = text
+# Инициализация приложения Streamlit
+st.set_page_config(page_title="Чат-бот: Братья Карамазовы", layout="centered")
+st.title("Чат-бот: Братья Карамазовы")
+st.write("Задайте любой вопрос о книге 'Братья Карамазовы'. Введите 'выход' для завершения чата.")
 
-def split_text_into_chunks_with_metadata(pages, chunk_size=500):
+# Поле для ввода OpenAI API ключа
+st.sidebar.header("Настройки API")
+api_key = st.sidebar.text_input("Введите ваш OpenAI API ключ:", type="password", placeholder="Введите ваш API ключ здесь...")
+
+# Проверка на наличие ключа
+if not api_key:
+    st.sidebar.warning("Пожалуйста, введите API ключ, чтобы продолжить.")
+    st.stop()
+
+# Функция для разбиения на чанки
+@st.cache_data(show_spinner=False)
+def load_and_process_text(pdf_path, chunk_size=500):
+    # Выгрузка текста книги
+    loader = PyPDFLoader(pdf_path)
+    
+    # Удаленим содержание
+    pages = loader.load()[7:]
+
     current_book = None
     current_chapter = None
     current_chapter_title = None
@@ -91,74 +100,110 @@ def split_text_into_chunks_with_metadata(pages, chunk_size=500):
                 'page': page_number,
                 'book': current_book,
                 'chapter': current_chapter,
-                # 'chapter_title': current_chapter_title
             })
     return chunks
 
-chunks = split_text_into_chunks_with_metadata(pages)
+# Загрузка текста с анимацией
+with st.spinner('Загрузка книги... Пожалуйста, подождите...'):
+    chunks = load_and_process_text(PDF_FILE_PATH)
 
-import faiss
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores import FAISS
-from langchain.chains import RetrievalQA
-from langchain.prompts import PromptTemplate
-from langchain_openai import ChatOpenAI
-
-# Streamlit
-
-import streamlit as st
-from streamlit_chat import message
-
-# Инициализация приложения Streamlit
-st.set_page_config(page_title="Чат-бот: Братья Карамазовы", layout="centered")
-st.title("Чат-бот: Братья Карамазовы")
-st.write("Задайте любой вопрос о книге 'Братья Карамазовы'. Введите 'выход' для завершения чата.")
-
-# Поле для ввода OpenAI API ключа
-st.sidebar.header("Настройки API")
-api_key = st.sidebar.text_input("Введите ваш OpenAI API ключ:", type="password", placeholder="Введите ваш API ключ здесь...")
-st.sidebar.write("Пожалуйста, предоставьте ваш API ключ перед началом чата. Если ключ не предоставлен, бот вернёт стандартный ответ.")
-
-# Инициализация модели эмбеддингов
-embeddings = OpenAIEmbeddings(model="text-embedding-3-large", openai_api_key=api_key)
+st.success('Текст книги успешно загружен!')
 
 # Создание списка текстов для индексации
 texts = [chunk['chunk'] for chunk in chunks]
 metadatas = [chunk for chunk in chunks]
 
-# Создание векторного хранилища FAISS
-vector_store = FAISS.from_texts(texts, embeddings, metadatas=metadatas)
+# Что будет происходить дальше: проверка, есть ли уже построенные эмбеддинги по конкретным чанкам
+# Если нет, то построим их, если да, зачем их перестраивать
 
-# Сохранение индекса (опционально)
-vector_store.save_local("faiss_index")
+# Название директории
+directory = "openai_vector_store_with_metainfo"
+
+# Пути полные к чанкам и индексу
+index_path = os.path.join(directory, "faiss_index")
+chunks_path = os.path.join(directory, "chunks.json")
+
+# Функции для работы с файлами
+# Загрузка чанков
+def load_chunk_texts(path):
+    if os.path.exists(path):
+        with open(path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    return None
+
+# Сохранение чанков
+def save_chunk_texts(path, chunk_texts):
+    with open(path, 'w', encoding='utf-8') as f:
+        json.dump(chunk_texts, f, ensure_ascii=False, indent=4)
+        
+# Функция для создания векторного хранилища
+def create_vector_store(chunk_texts, chunk_metadatas):
+    os.makedirs(directory, exist_ok=True)
+    
+    embeddings = OpenAIEmbeddings(model="text-embedding-3-large", openai_api_key=api_key)
+
+    vector_store = FAISS.from_texts(chunk_texts, embeddings, metadatas = chunk_metadatas)
+    vector_store.save_local(index_path)
+    
+    save_chunk_texts(chunks_path, chunk_texts)
+    return vector_store
+        
+# Основной код
+saved_chunk_texts = load_chunk_texts(chunks_path)
+
+if saved_chunk_texts == texts:
+    vector_store = FAISS.load_local(
+        index_path, 
+        OpenAIEmbeddings(model="text-embedding-3-large", openai_api_key=api_key),
+        allow_dangerous_deserialization = True
+    )
+else:
+    if os.path.exists(directory):
+        shutil.rmtree(directory)
+        
+    with st.spinner('Еще немного... Пожалуйста, подождите...'):
+        vector_store = create_vector_store(texts, metadatas)
+    
+    st.success('Теперь точно все! Добро пожаловать в наш чат-бот!')
 
 llm = ChatOpenAI(
-    model="gpt-4o",           # Specify the GPT-4o model
-    temperature=0.00,         # Low creativity for precise answers
-    openai_api_key=api_key,   # Your OpenAI API key
-    max_tokens=2048           # Adjust as needed
+    model="gpt-4o",
+    temperature=0.00,
+    openai_api_key=api_key
 )
 
-from langchain.prompts import PromptTemplate
-
-template = """Вы — ассистент, специализирующийся на предоставлении точных ответов на вопросы по книге "Братья Карамазовы" Фёдора Достоевского.
+template = """Вы — ассистент, специализирующийся на предоставлении точных и эстетически оформленных ответов на вопросы по книге "Братья Карамазовы" Фёдора Достоевского.  
 
 Используйте предоставленные отрывки из книги для формирования ответов. Обязательно:
 
-1. Приводите полный и развернутый ответ на вопрос.
-2. Затем приводите точные цитаты из текста книги, подтверждающие ваш ответ, извлекая их из контекста.
-3. Указывайте источник информации.
+1. Приводите полный и развернутый ответ на вопрос.  
+2. Затем приводите **точные и грамматически корректные цитаты** из текста книги, подтверждающие ваш ответ, извлекая их из контекста.  
+3. Если цитата обрывается или выглядит неестественно (например, заканчивается на половине предложения), **исправьте её для красоты и логичности**, добавляя **троеточия ("...")** в начале или конце, чтобы обозначить пропуск текста.  
+4. Указывайте источник каждой цитаты.  
+5. Если контекст не содержит достаточной информации для ответа, сообщите об этом прямо, **не добавляя домыслов или предположений**.  
 
+---
 
-Контекст:
+### **Шаблон ответа:**  
+
+**Ответ:**  
+Полный и развернутый ответ на вопрос.  
+
+**Цитаты:**  
+- "...Цитата 1..." (Источник)  
+- "...Цитата 2..." (Источник)  
+
+---
+
+**Контекст:**  
 {context}
 
-Вопрос: {question}
+**Вопрос:**  
+{question}
 
-Ответ:
-1. [Развернутый и полный ответ на вопрос]
-2. [Цитата из текста: "..."]
-3. [Источник: страница page, book, chapter]
+---
+
+**Ответ:**
 """
 
 prompt = PromptTemplate(
@@ -191,7 +236,7 @@ user_input = st.text_input("Ваш вопрос:", placeholder="Введите �
 
 if user_input:
     if user_input.lower() in ['выход', 'exit', 'quit']:
-        st.write("Чат завершён. Обновите страницу для начала нового разговора.")
+        st.write("Чат завершён. Обновите страницу для начала нового диалога.")
     else:
         # Добавление сообщения пользователя в историю
         st.session_state.messages.append({"role": "user", "content": user_input})
