@@ -20,6 +20,15 @@ FAISS, LangChain, Streamlit
 
 P.S. Тем более, что реализация на GigaChat быстрее работает ^_^
 
+## Демо проекта
+
+Записано для Giga-BookRAG, реализованного на основе GigaChat.
+
+<video width="640" height="360" controls>
+  <source src="video.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 ### Конечный результат
 
 Развернуто локальное решение с frontend'ом, реализованным с помощью технологии Streamlit.
