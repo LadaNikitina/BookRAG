@@ -18,7 +18,7 @@ FAISS, LangChain, Streamlit
 
 Мы понимаем, что далеко не у всех есть возможность запустить VPN или оплатить API ключ OpenAI и потестировать наш BookRAG. В случае, если у вас такой возможности нет, мы подготовили для вас реализацию на основе GigaChat. Нужно всего лишь перейти по [ссылке](https://github.com/LadaNikitina/BookRAG/tree/gigachat-main) (она же ветка gigachat-main) и продолжить оценивать наш проект :) 
 
-А если у вас нет возможности развернуть локально, мы подняли для вас сервер по [ссылке](https://bookrag-oayoayaoaoay.streamlit.app/).
+А если у вас нет возможности развернуть локально, мы подняли для вас сервер для OpenAI-edition нашего проекта по [ссылке](https://bookrag-openai-oaoaoaoya.streamlit.app/) и сервер для GigaChat-edition нашего проекта по [ссылке](https://bookrag-oayoayaoaoay.streamlit.app/).
 
 P.S. Тем более, что реализация на GigaChat быстрее работает ^_^
 
