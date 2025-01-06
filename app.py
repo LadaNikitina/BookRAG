@@ -20,9 +20,9 @@ def main():
     st.title(PAGE_TITLE)
     st.write("Задайте любой вопрос о книге 'Братья Карамазовы'. Введите 'выход' для завершения чата.")
     
-    # Поле для ввода OpenAI API ключа
+    # Поле для ввода GigaChat API ключа
     st.sidebar.header("Настройки API")
-    api_key = st.sidebar.text_input("Введите ваш OpenAI API ключ:", type="password", placeholder="Введите ваш API ключ здесь...")
+    api_key = st.sidebar.text_input("Введите ваш GigaChat API ключ:", type="password", placeholder="Введите ваш API ключ здесь...")
     
     # Проверка на наличие ключа
     if not api_key:

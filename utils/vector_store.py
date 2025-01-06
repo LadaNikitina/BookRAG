@@ -3,7 +3,7 @@
 import os
 import json
 import shutil
-from langchain.embeddings import OpenAIEmbeddings
+from langchain_gigachat.embeddings import GigaChatEmbeddings
 from langchain.vectorstores import FAISS
 import streamlit as st
 from .config import VECTOR_STORE_DIR, INDEX_PATH, CHUNKS_PATH
@@ -25,8 +25,12 @@ def save_chunk_texts(path, chunk_texts):
 def create_vector_store(chunk_texts, chunk_metadatas, api_key):
     os.makedirs(VECTOR_STORE_DIR, exist_ok=True)
     
-    embeddings = OpenAIEmbeddings(model="text-embedding-3-large", openai_api_key=api_key)
-
+    embeddings = GigaChatEmbeddings(
+        credentials = api_key,
+        scope = "GIGACHAT_API_PERS",
+        verify_ssl_certs = False
+    )
+    
     vector_store = FAISS.from_texts(chunk_texts, embeddings, metadatas = chunk_metadatas)
     vector_store.save_local(INDEX_PATH)
     
@@ -40,8 +44,12 @@ def get_vector_store(texts, metadatas, api_key):
     if saved_chunk_texts == texts:
         vector_store = FAISS.load_local(
             INDEX_PATH, 
-            OpenAIEmbeddings(model="text-embedding-3-large", openai_api_key=api_key),
-            allow_dangerous_deserialization=True
+            GigaChatEmbeddings(
+                credentials = api_key,
+                scope="GIGACHAT_API_PERS", 
+                verify_ssl_certs = False
+            ),
+            allow_dangerous_deserialization = True
         )
     else:
         if os.path.exists(VECTOR_STORE_DIR):
