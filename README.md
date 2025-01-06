@@ -20,11 +20,9 @@ FAISS, LangChain, Streamlit
 
 А если у вас нет возможности развернуть локально, мы подняли для вас сервер для OpenAI-edition нашего проекта по [ссылке](https://bookrag-openai-oaoaoaoya.streamlit.app/) и сервер для GigaChat-edition нашего проекта по [ссылке](https://bookrag-oayoayaoaoay.streamlit.app/).
 
-P.S. Тем более, что реализация на GigaChat быстрее работает ^_^
-
 ## Демо проекта
 
-Демо проекта можно посмотреть по [ссылке](https://drive.google.com/file/d/1vo0ggH95uGgEKx4H_Fntg8SOLOCva6tk/view?usp=sharing). Записано для Giga-BookRAG, реализованного на основе GigaChat.
+Демо проекта можно посмотреть по [ссылке](https://drive.google.com/file/d/1vo0ggH95uGgEKx4H_Fntg8SOLOCva6tk/view?usp=sharing). Записано для GigaChat-edition BookRAG.
 
 ## Конечный результат
 
