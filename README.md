@@ -84,7 +84,7 @@ P.S. Тем более, что реализация на GigaChat быстрее
 ### Установка зависимостей
 
 ```
-cd your_project
+python3 -m venv venv
 source venv/bin/activate  # Для macOS/Linux
 # или
 venv\Scripts\activate     # Для Windows
