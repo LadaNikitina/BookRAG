@@ -1,0 +1,8 @@
+langchain
+langchain-gigachat
+langchain-community
+faiss-cpu
+streamlit
+streamlit-chat
+langchain-openai
+pypdf
