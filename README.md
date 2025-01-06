@@ -83,23 +83,12 @@ P.S. Тем более, что реализация на GigaChat быстрее
 
 ### Установка зависимостей
 
-`pip install streamlit streamlit-chat`
+`cd your_project
+source venv/bin/activate  # Для macOS/Linux
+# или
+venv\Scripts\activate     # Для Windows
 
-`pip install langchain`
-
-`pip install -U langchain-community`
-
-`pip install sentence-transformers`
-
-`pip install faiss-gpu`
-
-`pip install openai`
-
-`pip install langchain_openai`
-
-`pip install pypdf`
-
-`pip install tiktoken`
+pip install -r requirements.txt`
 
 ### Запуск и setup
 
@@ -107,7 +96,7 @@ P.S. Тем более, что реализация на GigaChat быстрее
 
 Далее, для запуска приложения воспользуйтесь командой:
 
-`streamlit run rag-solution-with-streamlit.py
+`streamlit run app.py
 `
 
 Steamlit-приложение автоматически развернется в вашем браузере на localhost.
