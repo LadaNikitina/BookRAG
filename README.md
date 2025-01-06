@@ -83,12 +83,14 @@ P.S. Тем более, что реализация на GigaChat быстрее
 
 ### Установка зависимостей
 
-`cd your_project
+```
+cd your_project
 source venv/bin/activate  # Для macOS/Linux
 # или
 venv\Scripts\activate     # Для Windows
 
-pip install -r requirements.txt`
+pip install -r requirements.txt
+```
 
 ### Запуск и setup
 
