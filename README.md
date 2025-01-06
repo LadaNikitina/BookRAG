@@ -1,4 +1,4 @@
-# Проект BookRAG (Giga edition)
+# Проект BookRAG (GigaChat edition)
 
 Команда "Bookworms"
 
