@@ -81,6 +81,13 @@ P.S. Тем более, что реализация на GigaChat быстрее
 иметь собственный OpenAI API ключ, который может быть сгенерирован и оплачен
 здесь: https://platform.openai.com/docs/overview
 
+### Клонирование репозитория
+
+```
+git clone https://github.com/LadaNikitina/BookRAG.git
+cd BookRAG
+```
+
 ### Установка зависимостей
 
 ```
