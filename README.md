@@ -64,25 +64,20 @@ FAISS, LangChain, Streamlit
 
 ### Установка зависимостей
 
-`pip install langchain`
+```
+python3 -m venv venv
+source venv/bin/activate  # Для macOS/Linux
+# или
+venv\Scripts\activate     # Для Windows
 
-`pip install langchain-gigachat`
-
-`pip install langchain-community`
-
-`pip install faiss-cpu`
-
-`pip install streamlit`
-
-`pip install streamlit-chat`
-
-`pip install pypdf`
+pip install -r requirements.txt
+```
 
 ### Запуск и setup
 
 Для запуска приложения воспользуйтесь командой:
 
-`streamlit run rag-solution-with-streamlit.py
+`streamlit run app.py
 `
 
 Steamlit-приложение автоматически развернется в вашем браузере на localhost.
