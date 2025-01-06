@@ -62,6 +62,13 @@ FAISS, LangChain, Streamlit
 Для генерации ответов на вопросы наше решение использует модель GigaChat-Pro и эмбеддинги от GigaChat, поэтому для использования чат-бота требуется
 иметь собственный GigaChat API ключ, который может быть сгенерирован здесь: https://developers.sber.ru/studio/workspaces/my-space/get/gigachat-api
 
+### Клонирование репозитория
+
+```
+git clone git@github.com:LadaNikitina/BookRAG.git -b gigachat-main
+cd BookRAG
+```
+
 ### Установка зависимостей
 
 ```
